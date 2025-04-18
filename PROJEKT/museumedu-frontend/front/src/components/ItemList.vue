@@ -2,7 +2,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import api from '@/axios'
+import api from 'axios'
 
 const items = ref([])
 const route = useRoute()

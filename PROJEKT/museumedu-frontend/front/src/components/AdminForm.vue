@@ -1,7 +1,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import api from '@/axios'
+import api from 'axios'
 
 const name = ref('')
 const theme = ref('')
