@@ -16,7 +16,7 @@ class ThemeController extends Controller
     {
         $request->validate([
             'name' => 'required|string|unique:themes,name',
-            'image' => 'required|image'
+            'image' => 'required|mimes:jpg,jpeg,png,gif'
         ]);
 
         if ($request->hasFile('image')) {
@@ -32,4 +32,3 @@ class ThemeController extends Controller
         return response()->json(['message' => 'Téma sikeresen mentve!'], 201);
     }
 }
-

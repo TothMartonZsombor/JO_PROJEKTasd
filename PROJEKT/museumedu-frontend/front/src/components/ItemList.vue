@@ -24,7 +24,7 @@ import axios from 'axios'
 
 const items = ref([])
 const route = useRoute()
-const theme = route.params.theme
+const theme = ref(route.params.theme)
 
 onMounted(async () => {
   try {
@@ -36,12 +36,12 @@ onMounted(async () => {
 })
 
 const filteredItems = computed(() =>
-  items.value.filter(i => i.theme === theme)
+  items.value.filter(i => i.theme === theme.value)
 )
 
 function getImageUrl(path) {
-  if (!path) return '';
-  return 'http://localhost:8000/' + path;
+  if (!path) return ''
+  return 'http://localhost:8000/' + path
 }
 </script>
 
@@ -51,12 +51,10 @@ function getImageUrl(path) {
   font-size: 2.5rem;
   color: #6c1e1e;
 }
-
 .retro-card {
   border: 2px solid #e3dccc;
   border-radius: 16px;
 }
-
 .card-img-top {
   object-fit: cover;
   height: 200px;

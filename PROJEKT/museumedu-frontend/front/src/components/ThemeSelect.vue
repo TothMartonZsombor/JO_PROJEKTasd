@@ -47,17 +47,14 @@ function selectTheme(name) {
   font-size: 2.5rem;
   color: #6c1e1e;
 }
-
 .retro-card {
   border: 2px solid #e3dccc;
   border-radius: 16px;
   transition: transform 0.2s;
 }
-
 .retro-card:hover {
   transform: scale(1.03);
 }
-
 .card-img-top {
   object-fit: cover;
   height: 200px;

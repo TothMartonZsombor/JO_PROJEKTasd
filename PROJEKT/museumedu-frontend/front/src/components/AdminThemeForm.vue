@@ -51,8 +51,16 @@ async function submitTheme() {
     form.value.name = ''
     form.value.image = null
   } catch (error) {
-    console.error(error)
-    message.value = 'Hiba történt a mentés során.'
+    if (error.response && error.response.status === 422) {
+      const errors = error.response.data.errors
+      if (errors?.name?.includes('has already been taken')) {
+        message.value = 'Ez a téma már létezik!'
+      } else {
+        message.value = 'Hibás adatbevitel.'
+      }
+    } else {
+      message.value = 'Hiba történt a mentés során.'
+    }
     success.value = false
   }
 }
