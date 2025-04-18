@@ -32,3 +32,4 @@ class ThemeController extends Controller
         return response()->json(['message' => 'Téma sikeresen mentve!'], 201);
     }
 }
+
