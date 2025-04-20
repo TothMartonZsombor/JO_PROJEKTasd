@@ -1,8 +1,7 @@
-
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import api from 'axios'
+import api from '../axios'
 
 const themes = ref([])
 const router = useRouter()
