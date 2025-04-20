@@ -45,7 +45,7 @@ async function submitTheme() {
     formData.append('name', form.value.name)
     formData.append('image', form.value.image)
 
-    await axios.post('http://localhost:8000/api/themes', formData)
+    await axios.post('https://jo-projektasd-backend2.onrender.com/api/themes', formData)
     message.value = 'Sikeresen mentve!'
     success.value = true
     form.value.name = ''
