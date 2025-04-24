@@ -1,4 +1,3 @@
-
 <template>
   <div class="container py-5">
     <h2 class="text-center retro-title mb-4">Új téma hozzáadása</h2>

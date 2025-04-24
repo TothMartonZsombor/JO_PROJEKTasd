@@ -1,4 +1,3 @@
-
 <template>
   <div class="container py-5">
     <h1 class="text-center retro-title mb-4">Válassz témát</h1>
