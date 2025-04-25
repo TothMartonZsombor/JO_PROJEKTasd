@@ -1,14 +1,11 @@
+
 <template>
   <div class="container py-5">
     <h1 class="text-center retro-title mb-4">{{ theme }} témájú tárgyak</h1>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       <div class="col" v-for="item in filteredItems" :key="item.id">
         <div class="card h-100 shadow retro-card">
-          <img
-            :src="getImageUrl(item.image_path)"
-            class="card-img-top"
-            :alt="item.name"
-          />
+          <img :src="getImageUrl(item.image_path)" class="card-img-top" :alt="item.name">
           <div class="card-body">
             <h5 class="card-title">{{ item.name }}</h5>
             <p class="card-text">{{ item.story }}</p>
@@ -27,25 +24,24 @@ import axios from 'axios'
 
 const items = ref([])
 const route = useRoute()
-const theme = route.params.theme
+const theme = ref(route.params.theme)
 
 onMounted(async () => {
   try {
-    const res = await axios.get('http://museumedu.infinityfreeapp.com/api/items')
-    items.value = res.data
-  } catch (e) {
-    console.error('Nem sikerült lekérni az itemeket:', e)
+    const response = await axios.get('http://localhost:8000/api/items')
+    items.value = response.data
+  } catch (error) {
+    console.error("Nem sikerült lekérni az itemeket:", error)
   }
 })
 
 const filteredItems = computed(() =>
-  items.value.filter((i) => i.theme === theme)
+  items.value.filter(i => i.theme === theme.value)
 )
 
 function getImageUrl(path) {
   if (!path) return ''
-  // a backend storage-link /uploads vagy storage mappájától függően változz
-  return `http://museumedu.infinityfreeapp.com/${path}`
+  return 'http://localhost:8000/' + path
 }
 </script>
 
@@ -55,12 +51,10 @@ function getImageUrl(path) {
   font-size: 2.5rem;
   color: #6c1e1e;
 }
-
 .retro-card {
   border: 2px solid #e3dccc;
   border-radius: 16px;
 }
-
 .card-img-top {
   object-fit: cover;
   height: 200px;

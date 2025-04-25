@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'url' => 'https://museumedu.infinityfreeapp.com',
+    'url' => env('APP_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL'),
 

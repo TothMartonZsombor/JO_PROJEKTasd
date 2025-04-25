@@ -1,16 +1,24 @@
+
 <template>
   <div class="container py-5">
-    <h1 class="text-center retro-title mb-4">Új téma hozzáadása</h1>
-    <form @submit.prevent="submitTheme">
+    <h2 class="text-center retro-title mb-4">Új téma hozzáadása</h2>
+
+    <div v-if="message" :class="'alert ' + (success ? 'alert-success' : 'alert-danger')">
+      {{ message }}
+    </div>
+
+    <form @submit.prevent="submitTheme" enctype="multipart/form-data">
       <div class="mb-3">
         <label class="form-label">Téma neve</label>
-        <input v-model="name" class="form-control" required />
+        <input type="text" v-model="form.name" class="form-control" required>
       </div>
+
       <div class="mb-3">
-        <label class="form-label">Téma kép</label>
-        <input type="file" @change="onFileChange" class="form-control" required />
+        <label class="form-label">Téma képe</label>
+        <input type="file" @change="handleFileUpload" class="form-control" required>
       </div>
-      <button class="btn btn-primary">Mentés</button>
+
+      <button type="submit" class="btn btn-primary">Téma mentése</button>
     </form>
   </div>
 </template>
@@ -19,28 +27,41 @@
 import { ref } from 'vue'
 import axios from 'axios'
 
-const name = ref('')
-const image = ref(null)
+const form = ref({
+  name: '',
+  image: null
+})
 
-function onFileChange(e) {
-  image.value = e.target.files[0]
+const message = ref('')
+const success = ref(false)
+
+function handleFileUpload(event) {
+  form.value.image = event.target.files[0]
 }
 
 async function submitTheme() {
-  const data = new FormData()
-  data.append('name', name.value)
-  data.append('image', image.value)
-
   try {
-    await axios.post(
-      'http://museumedu.infinityfreeapp.com/api/themes',
-      data,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
-    )
-    alert('Téma sikeresen hozzáadva')
-  } catch (e) {
-    console.error('Hiba a téma mentésekor:', e)
-    alert('Téma hozzáadása közben hiba történt')
+    const formData = new FormData()
+    formData.append('name', form.value.name)
+    formData.append('image', form.value.image)
+
+    await axios.post('http://localhost:8000/api/themes', formData)
+    message.value = 'Sikeresen mentve!'
+    success.value = true
+    form.value.name = ''
+    form.value.image = null
+  } catch (error) {
+    if (error.response && error.response.status === 422) {
+      const errors = error.response.data.errors
+      if (errors?.name?.includes('has already been taken')) {
+        message.value = 'Ez a téma már létezik!'
+      } else {
+        message.value = 'Hibás adatbevitel.'
+      }
+    } else {
+      message.value = 'Hiba történt a mentés során.'
+    }
+    success.value = false
   }
 }
 </script>
@@ -48,5 +69,7 @@ async function submitTheme() {
 <style scoped>
 .retro-title {
   font-family: 'Shrikhand', cursive;
+  font-size: 2rem;
+  color: #6c1e1e;
 }
 </style>

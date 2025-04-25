@@ -1,31 +1,48 @@
+
 <template>
   <div class="container py-5">
-    <h1 class="text-center retro-title mb-4">Új tárgy feltöltése</h1>
-    <form @submit.prevent="submit">
+    <h1 class="text-center retro-title mb-4">Új tárgy hozzáadása</h1>
+
+    <div class="text-end mb-3">
+      <button class="btn btn-outline-secondary" @click="goToThemeForm">+ Új téma hozzáadása</button>
+    </div>
+
+    <div v-if="message" :class="'alert ' + (success ? 'alert-success' : 'alert-danger')">
+      {{ message }}
+    </div>
+
+    <form @submit.prevent="submitItem" enctype="multipart/form-data">
       <div class="mb-3">
         <label class="form-label">Név</label>
-        <input v-model="form.name" class="form-control" required />
+        <input type="text" v-model="form.name" class="form-control" required />
       </div>
+
       <div class="mb-3">
         <label class="form-label">Téma</label>
         <select v-model="form.theme" class="form-select" required>
-          <option value="" disabled>Válassz témát</option>
-          <option v-for="t in themes" :key="t" :value="t">{{ t }}</option>
+          <option disabled value="">Válassz témát</option>
+          <option v-for="theme in themes" :key="theme.id" :value="theme.name">
+            {{ theme.name }}
+          </option>
         </select>
       </div>
+
       <div class="mb-3">
         <label class="form-label">Év</label>
-        <input v-model="form.year" type="number" class="form-control" required />
+        <input type="number" v-model="form.year" class="form-control" required />
       </div>
+
       <div class="mb-3">
         <label class="form-label">Történet</label>
-        <textarea v-model="form.story" class="form-control" rows="3" required></textarea>
+        <textarea v-model="form.story" class="form-control" required></textarea>
       </div>
+
       <div class="mb-3">
-        <label class="form-label">Kép</label>
-        <input type="file" @change="onFileChange" class="form-control" required />
+        <label class="form-label">Kép feltöltése</label>
+        <input type="file" @change="handleFileUpload" class="form-control" required />
       </div>
-      <button class="btn btn-primary">Feltöltés</button>
+
+      <button type="submit" class="btn btn-success">Mentés</button>
     </form>
   </div>
 </template>
@@ -33,8 +50,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 
-const themes = ref([])
 const form = ref({
   name: '',
   theme: '',
@@ -43,43 +60,60 @@ const form = ref({
   image: null
 })
 
+const themes = ref([])
+const message = ref('')
+const success = ref(false)
+const router = useRouter()
+
+function handleFileUpload(event) {
+  form.value.image = event.target.files[0]
+}
+
+function goToThemeForm() {
+  router.push('/admin/themes')
+}
+
+async function submitItem() {
+  try {
+    const formData = new FormData()
+    formData.append('name', form.value.name)
+    formData.append('theme', form.value.theme)
+    formData.append('year', form.value.year)
+    formData.append('story', form.value.story)
+    formData.append('image', form.value.image)
+
+    await axios.post('http://localhost:8000/api/items', formData)
+
+    message.value = 'Sikeres feltöltés'
+    success.value = true
+    form.value = {
+      name: '',
+      theme: '',
+      year: '',
+      story: '',
+      image: null
+    }
+  } catch (error) {
+    console.error("Hiba történt:", error)
+    message.value = 'Hiba történt a feltöltés során.'
+    success.value = false
+  }
+}
+
 onMounted(async () => {
   try {
-    const res = await axios.get('http://museumedu.infinityfreeapp.com/api/themes')
-    themes.value = res.data
-  } catch (e) {
-    console.error('Hiba a témák lekérésekor:', e)
+    const response = await axios.get('http://localhost:8000/api/themes')
+    themes.value = response.data
+  } catch (error) {
+    console.error('Hiba a témák lekérdezésekor:', error)
   }
 })
-
-function onFileChange(e) {
-  form.value.image = e.target.files[0]
-}
-
-async function submit() {
-  const data = new FormData()
-  data.append('name', form.value.name)
-  data.append('theme', form.value.theme)
-  data.append('year', form.value.year)
-  data.append('story', form.value.story)
-  data.append('image', form.value.image)
-
-  try {
-    await axios.post(
-      'http://museumedu.infinityfreeapp.com/api/items',
-      data,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
-    )
-    alert('Sikeres feltöltés')
-  } catch (e) {
-    console.error('Feltöltési hiba:', e)
-    alert('Hiba történt a feltöltés során')
-  }
-}
 </script>
 
 <style scoped>
 .retro-title {
   font-family: 'Shrikhand', cursive;
+  font-size: 2.5rem;
+  color: #6c1e1e;
 }
 </style>

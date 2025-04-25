@@ -1,18 +1,15 @@
+
 <template>
   <div class="container py-5">
-    <h1 class="text-center retro-title mb-4">Témák</h1>
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-      <div class="col" v-for="t in themes" :key="t">
-        <router-link :to="{ name: 'items', params: { theme: t } }">
-          <div class="card h-100 shadow retro-card text-center p-3">
-            <img
-              :src="getImageUrl(t.image_path || t.image)"
-              class="img-fluid mb-2"
-              alt="téma kép"
-            />
-            <h5 class="card-title">{{ t.name || t }}</h5>
+    <h1 class="text-center retro-title mb-4">Válassz témát</h1>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+      <div class="col" v-for="theme in themes" :key="theme.id">
+        <div class="card h-100 shadow retro-card" @click="selectTheme(theme.name)" style="cursor:pointer;">
+          <img :src="getImageUrl(theme.image)" class="card-img-top" :alt="theme.name">
+          <div class="card-body text-center">
+            <h5 class="card-title">{{ theme.name }}</h5>
           </div>
-        </router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -20,22 +17,27 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const themes = ref([])
+const router = useRouter()
 
 onMounted(async () => {
   try {
-    const res = await axios.get('http://museumedu.infinityfreeapp.com/api/themes')
-    themes.value = res.data
-  } catch (e) {
-    console.error('Nem sikerült lekérni a témákat:', e)
+    const response = await axios.get('http://localhost:8000/api/themes')
+    themes.value = response.data
+  } catch (error) {
+    console.error("Nem sikerült betölteni a témákat:", error)
   }
 })
 
-function getImageUrl(path) {
-  if (!path) return ''
-  return `http://museumedu.infinityfreeapp.com/${path}`
+function getImageUrl(filename) {
+  return 'http://localhost:8000/items/' + filename
+}
+
+function selectTheme(name) {
+  router.push(`/theme/${name}`)
 }
 </script>
 
@@ -48,5 +50,13 @@ function getImageUrl(path) {
 .retro-card {
   border: 2px solid #e3dccc;
   border-radius: 16px;
+  transition: transform 0.2s;
+}
+.retro-card:hover {
+  transform: scale(1.03);
+}
+.card-img-top {
+  object-fit: cover;
+  height: 200px;
 }
 </style>
