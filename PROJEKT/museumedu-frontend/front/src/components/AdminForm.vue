@@ -4,7 +4,7 @@
     <h1 class="text-center retro-title mb-4">Új tárgy hozzáadása</h1>
 
     <div class="text-end mb-3">
-      <button class="btn btn-outline-secondary" @click="goToThemeForm">+ Új téma hozzáadása</button>
+      <button class="btn btn-outline-secondary" @click="goToThemeForm">Témák kezelése és hozzáadása</button>
     </div>
 
     <div v-if="message" :class="'alert ' + (success ? 'alert-success' : 'alert-danger')">
@@ -44,10 +44,12 @@
 
       <button type="submit" class="btn btn-success">Mentés</button>
     </form>
+    <AdminItemList />
   </div>
 </template>
 
 <script setup>
+import AdminItemList from './AdminItemList.vue'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'

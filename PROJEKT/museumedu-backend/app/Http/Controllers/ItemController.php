@@ -44,4 +44,38 @@ class ItemController extends Controller
         $themes = Item::select('theme')->distinct()->pluck('theme');
         return response()->json($themes);
     }
+
+    /**
+     * Remove the image of the specified item.
+     */
+    public function destroyImage($id)
+    {
+        $item = Item::findOrFail($id);
+        if ($item->image_path) {
+            $path = public_path($item->image_path);
+            if (file_exists($path)) {
+                unlink($path);
+            }
+            $item->image_path = null;
+            $item->save();
+        }
+        return response()->json(['message' => 'Tárgy képe sikeresen törölve!']);
+    }
+
+    /**
+     * Remove the specified item and its image.
+     */
+    public function destroy($id)
+    {
+        $item = Item::findOrFail($id);
+        if ($item->image_path) {
+            $path = public_path($item->image_path);
+            if (file_exists($path)) {
+                unlink($path);
+            }
+        }
+        $item->delete();
+        return response()->json(['message' => 'Tárgy sikeresen törölve!']);
+    }
+
 }

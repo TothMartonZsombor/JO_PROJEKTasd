@@ -31,4 +31,21 @@ class ThemeController extends Controller
 
         return response()->json(['message' => 'Téma sikeresen mentve!'], 201);
     }
+
+    /**
+     * Remove the specified theme.
+     */
+    public function destroy($id)
+    {
+        $theme = Theme::findOrFail($id);
+        if ($theme->image) {
+            $path = public_path('items/' . $theme->image);
+            if (file_exists($path)) {
+                unlink($path);
+            }
+        }
+        $theme->delete();
+        return response()->json(['message' => 'Téma sikeresen törölve!']);
+    }
+
 }

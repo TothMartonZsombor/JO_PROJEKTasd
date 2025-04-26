@@ -20,10 +20,12 @@
 
       <button type="submit" class="btn btn-primary">Téma mentése</button>
     </form>
+    <AdminThemeList />
   </div>
 </template>
 
 <script setup>
+import AdminThemeList from './AdminThemeList.vue'
 import { ref } from 'vue'
 import axios from 'axios'
 
