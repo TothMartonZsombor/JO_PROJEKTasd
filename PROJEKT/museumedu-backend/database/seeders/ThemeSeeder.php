@@ -9,11 +9,6 @@ class ThemeSeeder extends Seeder
 {
     public function run(): void
     {
-        Theme::insert([
-            ['name' => 'Technika', 'image' => 'technika.JPG'],
-            ['name' => 'Iskola', 'image' => 'iskola.JPG'],
-            ['name' => 'Háztartás', 'image' => 'haztartas.JPG'],
-            ['name' => 'Zene', 'image' => 'zene.JPG'],
-        ]);
+        
     }
 }
